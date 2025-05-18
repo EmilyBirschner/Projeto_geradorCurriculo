@@ -1,5 +1,3 @@
-// script.js atualizado com destaque visual nos campos obrigatórios inválidos
-
 window.addEventListener('DOMContentLoaded', () => {
     const camposFixos = ['nome', 'email', 'telefone', 'resumo', 'linkedin', 'portfolio'];
     camposFixos.forEach(id => {
@@ -62,11 +60,26 @@ function criarCampo(classe, valor = '') {
     return wrapper;
 }
 
+const idsDeContainer = {
+    experiencia: 'experiencias-container',
+    formacao: 'formacoes-container',
+    habilidade: 'habilidades-container',
+    idioma: 'idiomas-container'
+};
+
 ['experiencia', 'formacao', 'habilidade', 'idioma'].forEach(tipo => {
-    document.getElementById(`add-${tipo}`).addEventListener('click', () => {
-        document.getElementById(`${tipo}s-container`).appendChild(criarCampo(tipo));
-        salvarTudo();
-    });
+    const botao = document.getElementById(`add-${tipo}`);
+    const containerId = idsDeContainer[tipo];
+
+    if (botao && containerId) {
+        botao.addEventListener('click', () => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.appendChild(criarCampo(tipo));
+                salvarTudo();
+            }
+        });
+    }
 });
 
 function salvarTudo() {
