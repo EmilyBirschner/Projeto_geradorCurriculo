@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Currículo</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="img/logo_gray.png" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/vfs_fonts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Gerador de Currículo</h1>
+
+        <form id="form-curriculo">
+            <label for="nome">Nome completo:</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required />
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" placeholder="email@email.com" required />
+
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" placeholder="(99)99999-9999" required />
+
+            <label for="linkedin">LinkedIn:</label>
+            <input type="text" id="linkedin" name="linkedin" placeholder="https://www.linkedin.com/in/seu-nome"
+                required />
+
+            <label for="portfolio">Link do portfólio:</label>
+            <input type="text" id="portfolio" name="portfolio" placeholder="Coloque aqui o link do seu portfólio" />
+
+            <label for="resumo">Objetivo:</label>
+            <textarea id="resumo" name="resumo" rows="4"></textarea>
+
+            <label>Experiências:</label>
+            <div id="experiencias-container" class="grupo-dinamico">
+            </div>
+            <button type="button" id="add-experiencia">+ Adicionar Experiência</button>
+
+            <label>Formação Acadêmica:</label>
+            <div id="formacoes-container" class="grupo-dinamico">
+            </div>
+            <button type="button" id="add-formacao">+ Adicionar Formação</button>
+
+            <label>Idiomas:</label>
+            <div id="idiomas-container" class="grupo-dinamico">
+            </div>
+            <button type="button" id="add-idioma">+ Adicionar Idioma</button>
+
+            <label>Habilidades:</label>
+            <div id="habilidades-container" class="grupo-dinamico">
+            </div>
+
+            <button type="button" id="add-habilidade">+ Adicionar Habilidade</button>
+
+            <div class="botoes mensagem-e-botao">
+                <input type="text" name="website" id="website" style="display:none;" autocomplete="off" />
+                <button type="button" id="gerar-pdf">Gerar Currículo em PDF</button>
+                <div>
+                    <div id="mensagem-erro" class="mensagem-erro"></div>
+                    <div id="mensagem-sucesso" class="mensagem-sucesso"></div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="js/script.js"></script>
+
+    <footer class="footer">
+        <p>
+            Desenvolvido por <a href="https://emily.dev.br" target="_blank">Emily Birschner</a> •
+            &copy; <span id="ano-atual"></span>
+        </p>
+    </footer>
+
+</body>
+
+</html>
