@@ -98,12 +98,12 @@ textarea {
 .mensagem-erro {
     font-weight: bold;
     font-size: 15px;
-    color: red;
+    color: #e74c3c;
     margin-top: 5px;
 }
 
 .erro-campo {
-    border: 2px solid red !important;
+    border: 2px solid #e74c3c !important;
 }
 
 .mensagem-sucesso {
@@ -136,7 +136,45 @@ textarea {
     text-decoration: underline;
 }
 
+.experiencia-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 16px 16px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    position: relative;
+    background-color: #f9f9f9;
+}
 
+.experiencia-wrapper input,
+.experiencia-wrapper textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.experiencia-wrapper textarea {
+    resize: vertical;
+    min-height: 60px;
+    max-height: 200px;
+}
+
+.experiencia-wrapper .btn-remover {
+    position: absolute;
+    top: -8px;
+    right: 7px;
+    background: transparent;
+    color: #e74c3c;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
 
 /* Botões principais */
 button {

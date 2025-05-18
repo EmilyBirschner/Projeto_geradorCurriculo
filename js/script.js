@@ -6,7 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (el && valor) el.value = valor;
     });
 
-    restaurarGrupo('experiencias', 'experiencia');
+    restaurarGrupoExperiencias();
     restaurarGrupo('formacoes', 'formacao');
     restaurarGrupo('habilidades', 'habilidade');
     restaurarGrupo('idiomas', 'idioma');
@@ -16,15 +16,94 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function restaurarGrupoExperiencias() {
+    const valores = JSON.parse(localStorage.getItem('experiencias')) || [];
+    const container = document.getElementById('experiencias-container');
+    if (valores.length === 0) {
+        container.appendChild(criarCampoExperiencia());
+    } else {
+        valores.forEach(valor => container.appendChild(criarCampoExperiencia(valor)));
+    }
+}
 function restaurarGrupo(key, classe) {
     const valores = JSON.parse(localStorage.getItem(key)) || [];
     const container = document.getElementById(`${key}-container`);
     if (valores.length === 0) {
         container.appendChild(criarCampo(classe));
     } else {
-        valores.forEach(valor => container.appendChild(criarCampo(classe, valor)));
+        valores.forEach(valor => {
+            container.appendChild(criarCampo(classe, valor));
+        });
     }
 }
+
+
+function criarCampoExperiencia(valor = { cargo: '', empresaPeriodo: '', descricao: '' }) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'campo-wrapper experiencia-wrapper';
+
+    const inputCargo = document.createElement('input');
+    inputCargo.type = 'text';
+    inputCargo.className = 'experiencia-cargo';
+    inputCargo.placeholder = 'Cargo';
+    inputCargo.value = valor.cargo || '';
+    inputCargo.addEventListener('input', salvarTudo);
+
+    const inputEmpresa = document.createElement('input');
+    inputEmpresa.type = 'text';
+    inputEmpresa.className = 'experiencia-empresa';
+    inputEmpresa.placeholder = 'Empresa • Período';
+    inputEmpresa.value = valor.empresaPeriodo || '';
+    inputEmpresa.addEventListener('input', salvarTudo);
+
+    const inputDescricao = document.createElement('textarea');
+    inputDescricao.className = 'experiencia-descricao';
+    inputDescricao.placeholder = 'Descrição das atividades';
+    inputDescricao.value = valor.descricao || '';
+    inputDescricao.addEventListener('input', salvarTudo);
+
+    const botaoRemover = document.createElement('button');
+    botaoRemover.type = 'button';
+    botaoRemover.textContent = '×';
+    botaoRemover.className = 'btn-remover';
+    botaoRemover.addEventListener('click', () => {
+        wrapper.remove();
+        salvarTudo();
+    });
+
+    wrapper.appendChild(inputCargo);
+    wrapper.appendChild(inputEmpresa);
+    wrapper.appendChild(inputDescricao);
+    wrapper.appendChild(botaoRemover);
+
+    return wrapper;
+}
+
+document.getElementById('add-experiencia').addEventListener('click', () => {
+    document.getElementById('experiencias-container').appendChild(criarCampoExperiencia());
+    salvarTudo();
+});
+
+const idsDeContainer = {
+    formacao: 'formacoes-container',
+    habilidade: 'habilidades-container',
+    idioma: 'idiomas-container'
+};
+
+['formacao', 'habilidade', 'idioma'].forEach(tipo => {
+    const botao = document.getElementById(`add-${tipo}`);
+    const containerId = idsDeContainer[tipo];
+
+    if (botao && containerId) {
+        botao.addEventListener('click', () => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.appendChild(criarCampo(tipo));
+                salvarTudo();
+            }
+        });
+    }
+});
 
 function criarCampo(classe, valor = '') {
     const wrapper = document.createElement('div');
@@ -35,13 +114,11 @@ function criarCampo(classe, valor = '') {
     input.name = classe;
     input.className = classe;
     input.value = valor;
-    input.placeholder = classe === 'experiencia'
-        ? 'Ex: Empresa X - Cargo - Período'
-        : classe === 'formacao'
-            ? 'Ex: Curso - Instituição - Ano'
-            : classe === 'idioma'
-                ? 'Ex: Inglês - Intermediário'
-                : 'Ex: JavaScript, React...';
+    input.placeholder = classe === 'formacao'
+        ? 'Ex: Curso - Instituição - Ano'
+        : classe === 'idioma'
+            ? 'Ex: Inglês - Intermediário'
+            : 'Ex: JavaScript, React...';
 
     input.addEventListener('input', salvarTudo);
 
@@ -60,28 +137,6 @@ function criarCampo(classe, valor = '') {
     return wrapper;
 }
 
-const idsDeContainer = {
-    experiencia: 'experiencias-container',
-    formacao: 'formacoes-container',
-    habilidade: 'habilidades-container',
-    idioma: 'idiomas-container'
-};
-
-['experiencia', 'formacao', 'habilidade', 'idioma'].forEach(tipo => {
-    const botao = document.getElementById(`add-${tipo}`);
-    const containerId = idsDeContainer[tipo];
-
-    if (botao && containerId) {
-        botao.addEventListener('click', () => {
-            const container = document.getElementById(containerId);
-            if (container) {
-                container.appendChild(criarCampo(tipo));
-                salvarTudo();
-            }
-        });
-    }
-});
-
 function salvarTudo() {
     const camposFixos = ['nome', 'email', 'telefone', 'resumo', 'linkedin', 'portfolio'];
     camposFixos.forEach(id => {
@@ -89,7 +144,14 @@ function salvarTudo() {
         if (el) localStorage.setItem(id, el.value.trim());
     });
 
-    salvarGrupo('experiencias', 'experiencia');
+    const experiencias = [...document.querySelectorAll('.experiencia-wrapper')].map(wrapper => ({
+        cargo: wrapper.querySelector('.experiencia-cargo')?.value.trim() || '',
+        empresaPeriodo: wrapper.querySelector('.experiencia-empresa')?.value.trim() || '',
+        descricao: wrapper.querySelector('.experiencia-descricao')?.value.trim() || ''
+    })).filter(exp => exp.cargo || exp.empresaPeriodo || exp.descricao);
+
+    localStorage.setItem('experiencias', JSON.stringify(experiencias));
+
     salvarGrupo('formacoes', 'formacao');
     salvarGrupo('habilidades', 'habilidade');
     salvarGrupo('idiomas', 'idioma');
@@ -100,6 +162,10 @@ function salvarGrupo(key, classe) {
         .map(input => input.value.trim())
         .filter(texto => texto !== '');
     localStorage.setItem(key, JSON.stringify(valores));
+}
+
+function pegarGrupoExperiencias() {
+    return JSON.parse(localStorage.getItem('experiencias')) || [];
 }
 
 const telefoneInput = document.getElementById('telefone');
@@ -139,7 +205,8 @@ function validarFormulario() {
     const portfolio = document.getElementById('portfolio')?.value.trim();
     const honeypot = document.getElementById('website')?.value.trim();
 
-    const experiencias = pegarGrupo('experiencia');
+    //const experiencias = pegarGrupo('experiencia');
+    const experiencias = pegarGrupoExperiencias();
     const formacoes = pegarGrupo('formacao');
     const habilidades = pegarGrupo('habilidade');
     const idiomas = pegarGrupo('idioma');
@@ -191,6 +258,15 @@ function validarFormulario() {
         return false;
     }
 
+    const algumaIncompleta = experiencias.some(exp =>
+        !exp.cargo || !exp.empresaPeriodo || !exp.descricao
+    );
+
+    if (algumaIncompleta) {
+        mensagemErro.textContent = 'Preencha todos os campos de cada experiência.';
+        return false;
+    }
+
     if (formacoes.length === 0) {
         mensagemErro.textContent = 'Adicione pelo menos uma formação.';
         return false;
@@ -219,7 +295,8 @@ document.getElementById('gerar-pdf').addEventListener('click', () => {
     const linkedin = document.getElementById('linkedin').value;
     const portfolio = document.getElementById('portfolio').value;
 
-    const experiencias = pegarGrupo('experiencia');
+    //const experiencias = pegarGrupo('experiencia');
+    const experiencias = pegarGrupoExperiencias();
     const formacoes = pegarGrupo('formacao');
     const habilidades = pegarGrupo('habilidade');
     const idiomas = pegarGrupo('idioma');
@@ -235,7 +312,11 @@ document.getElementById('gerar-pdf').addEventListener('click', () => {
             { text: resumo || '-', margin: [0, 0, 0, 10] },
 
             { text: 'Experiências', style: 'section' },
-            ...experiencias.map(exp => ({ text: `• ${exp}`, margin: [0, 0, 0, 5] })),
+            ...experiencias.map(exp => ([
+                { text: exp.cargo, bold: true, margin: [0, 0, 0, 2] },
+                { text: exp.empresaPeriodo, italics: true, margin: [0, 0, 0, 2] },
+                { text: `• ${exp.descricao}`, margin: [0, 0, 0, 8] }
+            ])).flat(),
 
             { text: 'Formação Acadêmica', style: 'section' },
             ...formacoes.map(form => ({ text: `• ${form}`, margin: [0, 0, 0, 5] })),
